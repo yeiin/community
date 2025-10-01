@@ -28,9 +28,19 @@ dependencies {
 	//spring web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
 	//annotation
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//bcrypt
+	implementation 'at.favre.lib:bcrypt:0.10.2'
 
 	//mysql
 	implementation 'mysql:mysql-connector-java:8.0.33'
