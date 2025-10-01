@@ -12,7 +12,7 @@ public class Auth extends BaseTime {
 
     @Id
     @MapsId
-    @Column(name = "member_id")
+    @JoinColumn(name = "member_id")
     private long memberId;
 
     private String refreshTokenHash;

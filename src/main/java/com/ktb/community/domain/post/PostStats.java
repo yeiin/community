@@ -11,7 +11,7 @@ public class PostStats {
 
     @Id
     @MapsId
-    @Column(name = "post_id")
+    @JoinColumn(name = "post_id")
     private long postId;
 
     private long likeCount;
