@@ -38,4 +38,20 @@ public class Member extends BaseTime {
         this.imageUrl = imageUrl;
         this.state = state;
     }
+
+    public void updateNickname(final String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateImageUrl(final String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void updatePassword(final String password) {
+        this.password = password;
+    }
+
+    public void updateState(final boolean state) {
+        this.state = state;
+    }
 }

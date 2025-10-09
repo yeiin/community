@@ -3,6 +3,8 @@ package com.ktb.community.repository.member;
 import com.ktb.community.domain.member.Member;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
     private final MemberJpaRepository memberJpaRepository;
@@ -14,6 +16,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Member save(final Member member) {
         return memberJpaRepository.save(member);
+    }
+
+    @Override
+    public Optional<Member> findById(final long id) {
+        return memberJpaRepository.findById(id);
     }
 
     @Override
