@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface AuthJpaRepository extends JpaRepository<Auth, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select a from Auth a where a.memberId = :memberId")
+    @Query("select a from Auth a where a.member.id = :memberId")
     Optional<Auth> findByMemberId(final long memberId);
     Optional<Auth> findByRefreshTokenHash(final String refreshTokenHash);
 }

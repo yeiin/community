@@ -3,6 +3,7 @@ package com.ktb.community.domain.post;
 import com.ktb.community.domain.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,7 +25,8 @@ public class Post extends BaseTime {
 
     private String imageUrl;
 
-    public Post( long memberId, String title, String contents, String imageUrl) {
+    @Builder
+    public Post(final long memberId, final String title, final String contents, final String imageUrl) {
         this.memberId = memberId;
         this.title = title;
         this.contents = contents;

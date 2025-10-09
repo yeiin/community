@@ -65,7 +65,9 @@ public class AuthServiceImpl implements AuthService {
         if(auth.isPresent()) {
             auth.get().updateRefreshTokenHash(encryptEncoder.sha256Encrypt(refreshToken));
         }else {
-            authRepository.save(new Auth(memberId, encryptEncoder.sha256Encrypt(refreshToken)));
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+            authRepository.save(new Auth(member, encryptEncoder.sha256Encrypt(refreshToken)));
         }
     }
 
@@ -91,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
         Auth auth = authRepository.findByRefreshTokenHash(encryptEncoder.sha256Encrypt(refreshTokenRequest.refreshToken()))
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "리프레쉬 토큰 정보를 찾을 수 없습니다."));
 
-        return createJwts(auth.getMemberId());
+        return createJwts(auth.getMember().getId());
     }
 
     @Transactional

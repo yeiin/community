@@ -1,6 +1,7 @@
 package com.ktb.community.domain.auth;
 
 import com.ktb.community.domain.BaseTime;
+import com.ktb.community.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,14 +19,15 @@ public class Auth extends BaseTime {
     @Column(name = "auth_id")
     private long id;
 
-    @Column(unique = true)
-    private long memberId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", unique = true, nullable = false)
+    private Member member;
 
     private String refreshTokenHash;
 
     @Builder
-    public Auth(final long memberId, final String refreshTokenHash) {
-        this.memberId = memberId;
+    public Auth(final Member member, final String refreshTokenHash) {
+        this.member = member;
         this.refreshTokenHash = refreshTokenHash;
     }
 
