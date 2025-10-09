@@ -1,6 +1,6 @@
 package com.ktb.community.global.encrypt;
 
-
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +13,21 @@ public class EncryptEncoder {
         this.encoder = encoder;
     }
 
-    public String encrypt(String string) {
+    public String bcryptEncrypt(String string) {
         return encoder.encode(string);
     }
 
-    public boolean isMatch(String string, String encodedString) {
+    public boolean bcryptIsMatch(String string, String encodedString) {
         return encoder.matches(string, encodedString);
+    }
+
+    public String sha256Encrypt(String string) {
+        return DigestUtils.sha256Hex(string);
+    }
+
+    public boolean sha256EncryptIsMatch(String string, String encodedString) {
+        String encoded = sha256Encrypt(string);
+        return encoded.equals(encodedString);
     }
 
 }

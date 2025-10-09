@@ -64,6 +64,4 @@ public class MemberController {
         return memberService.softDeleteMember(memberId);
     }
 
-
-
 }

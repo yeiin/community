@@ -53,7 +53,6 @@ public class AuthFilter extends OncePerRequestFilter {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 양식의 토큰입니다.");
         }
 
-        // 다음 Filter 실행
         filterChain.doFilter(request, response);
     }
 

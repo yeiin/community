@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface MemberRepository {
     Member save(final Member member);
     Optional<Member> findById(final long id);
+    Optional<Member> findByEmail(final String email);
     boolean existsNickname(String nickname);
     boolean existsEmail(String email);
 }

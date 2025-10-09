@@ -9,7 +9,7 @@ import com.ktb.community.dto.member.response.LoginResponse;
 import com.ktb.community.dto.member.response.MemberDto;
 import com.ktb.community.global.encrypt.EncryptEncoder;
 import com.ktb.community.repository.member.MemberRepository;
-import com.ktb.community.service.jwt.JwtService;
+import com.ktb.community.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final EncryptEncoder encryptEncoder;
-    private final JwtService jwtService;
+    private final AuthService authService;
 
     public MemberServiceImpl(final MemberRepository memberRepository, final EncryptEncoder encryptEncoder,
-                             final JwtService jwtService) {
+                             final AuthService authService) {
         this.memberRepository = memberRepository;
         this.encryptEncoder = encryptEncoder;
-        this.jwtService = jwtService;
+        this.authService = authService;
     }
 
     @Transactional
@@ -37,13 +37,13 @@ public class MemberServiceImpl implements MemberService {
         Member member = Member.builder()
                 .email(memberPostDto.email())
                 .nickname(memberPostDto.nickname())
-                .password(encryptEncoder.encrypt(memberPostDto.password()))
+                .password(encryptEncoder.bcryptEncrypt(memberPostDto.password()))
                 .state(true)
                 .imageUrl(memberPostDto.imageUrl())
                 .build();
 
         memberRepository.save(member);
-        return jwtService.createJwts(member.getId());
+        return authService.createJwts(member.getId());
     }
 
     @Transactional(readOnly = true)
@@ -89,7 +89,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
-        member.updatePassword(encryptEncoder.encrypt(passwordPatchDto.password()));
+        member.updatePassword(encryptEncoder.bcryptEncrypt(passwordPatchDto.password()));
 
         return Response.of(HttpStatus.OK, "패스워드 변경에 성공했습니다.");
     }
@@ -113,7 +113,6 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
         member.updateState(false);
-
         return Response.of(HttpStatus.OK, "회원 탈퇴에 성공했습니다.");
     }
 
