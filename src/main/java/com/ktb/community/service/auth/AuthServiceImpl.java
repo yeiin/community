@@ -103,6 +103,12 @@ public class AuthServiceImpl implements AuthService {
         return Response.of(HttpStatus.OK, "로그아웃에 성공했습니다.");
     }
 
+    @Transactional
+    @Override
+    public void deleteAuthByMemberId(final long memberId) {
+        authRepository.deleteByMemberId(memberId);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public boolean checkAccountOwner(final long memberId) {

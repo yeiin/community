@@ -32,7 +32,7 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     @Override
     public void deleteByMemberId(final long memberId) {
-        authJpaRepository.deleteById(memberId);
+        authJpaRepository.deleteByMemberId(memberId);
     }
 
     @Override

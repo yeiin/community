@@ -113,6 +113,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
         member.updateState(false);
+        authService.deleteAuthByMemberId(memberId);
         return Response.of(HttpStatus.OK, "회원 탈퇴에 성공했습니다.");
     }
 
