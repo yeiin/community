@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record PostBasicDto(
+public record PostBasicResponse(
         long id,
         long memberId,
         String title,
@@ -17,8 +17,8 @@ public record PostBasicDto(
         LocalDateTime createdAt
 ) {
 
-        public static PostBasicDto from(final Post post) {
-                return PostBasicDto.builder()
+        public static PostBasicResponse from(final Post post) {
+                return PostBasicResponse.builder()
                         .id(post.getId())
                         .memberId(post.getMemberId())
                         .title(post.getTitle())

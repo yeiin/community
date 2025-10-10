@@ -1,9 +1,9 @@
 package com.ktb.community.controller.post;
 
 import com.ktb.community.dto.Response;
-import com.ktb.community.dto.post.request.PostRequestDto;
-import com.ktb.community.dto.post.response.PostBasicDto;
-import com.ktb.community.dto.post.response.PostDto;
+import com.ktb.community.dto.post.request.PostRequest;
+import com.ktb.community.dto.post.response.PostBasicResponse;
+import com.ktb.community.dto.post.response.PostResponse;
 import com.ktb.community.dto.post.response.PostResponses;
 import com.ktb.community.global.annotation.Login;
 import com.ktb.community.service.post.PostService;
@@ -21,8 +21,8 @@ public class PostController {
     }
 
     @PostMapping("")
-    public PostBasicDto savePost(@RequestBody @Valid PostRequestDto postRequestDto, @Login long memberId){
-        return postService.savePost(postRequestDto, memberId);
+    public PostBasicResponse savePost(@RequestBody @Valid PostRequest postRequest, @Login long memberId){
+        return postService.savePost(postRequest, memberId);
     }
 
     @GetMapping("")
@@ -31,14 +31,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public PostDto getPost(@PathVariable("postId") final long postId){
+    public PostResponse getPost(@PathVariable("postId") final long postId){
         return postService.getPost(postId);
     }
 
     @PatchMapping("/{postId}")
-    public PostBasicDto patchPost(@PathVariable("postId") final long postId, @Login long memberId,
-                                  @RequestBody @Valid PostRequestDto postRequestDto){
-        return postService.patchPost(postId, postRequestDto);
+    public PostBasicResponse patchPost(@PathVariable("postId") final long postId, @Login long memberId,
+                                       @RequestBody @Valid PostRequest postRequest){
+        return postService.patchPost(postId, postRequest);
     }
 
     @DeleteMapping("/{postId}")

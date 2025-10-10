@@ -4,14 +4,14 @@ import com.ktb.community.domain.post_stats.PostStats;
 import lombok.Builder;
 
 @Builder
-public record PostCounterDto(
+public record PostCounterResponse(
         long likes,
         long comments,
         long views
 ) {
 
-    public static PostCounterDto from(PostStats postStats) {
-        return PostCounterDto.builder()
+    public static PostCounterResponse from(PostStats postStats) {
+        return PostCounterResponse.builder()
                 .likes(postStats.getLikeCount())
                 .comments(postStats.getCommentCount())
                 .views(postStats.getViewCount())

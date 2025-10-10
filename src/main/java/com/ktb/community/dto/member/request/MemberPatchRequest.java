@@ -2,7 +2,7 @@ package com.ktb.community.dto.member.request;
 
 import com.ktb.community.global.annotation.Nickname;
 
-public record MemberPatchDto(
+public record MemberPatchRequest(
         @Nickname
         String nickname,
 

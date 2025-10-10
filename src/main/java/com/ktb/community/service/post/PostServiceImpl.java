@@ -5,7 +5,7 @@ import com.ktb.community.domain.post.Post;
 import com.ktb.community.domain.post_like.PostLike;
 import com.ktb.community.domain.post_stats.PostStats;
 import com.ktb.community.dto.Response;
-import com.ktb.community.dto.post.request.PostRequestDto;
+import com.ktb.community.dto.post.request.PostRequest;
 import com.ktb.community.dto.post.response.*;
 import com.ktb.community.repository.member.MemberRepository;
 import com.ktb.community.repository.post.PostRepository;
@@ -42,61 +42,61 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public PostBasicDto savePost(final PostRequestDto postRequestDto, final long memberId) {
+    public PostBasicResponse savePost(final PostRequest postRequest, final long memberId) {
 
         Post post = Post.builder()
                 .memberId(memberId)
-                .title(postRequestDto.title())
-                .contents(postRequestDto.contents())
-                .imageUrl(postRequestDto.imageUrl())
+                .title(postRequest.title())
+                .contents(postRequest.contents())
+                .imageUrl(postRequest.imageUrl())
                 .build();
 
         PostStats postStats = new PostStats(post);
         postStatsRepository.save(postStats);
 
-        return PostBasicDto.from(postRepository.save(post));
+        return PostBasicResponse.from(postRepository.save(post));
     }
 
     @Transactional(readOnly = true)
     @Override
     public PostResponses getPosts(final Long lastSeenId) {
         List<Post> postList = postRepository.getPostsForInfiniteScroll(lastSeenId, PageRequest.of(0, 10));
-        List<PostDto> posts = postList.stream().map(this::fromPost).toList();
+        List<PostResponse> posts = postList.stream().map(this::fromPost).toList();
 
         return new PostResponses(posts);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public PostDto getPost(final long postId) {
+    public PostResponse getPost(final long postId) {
         Post post = postRepository.getById(postId);
         return fromPost(post);
     }
 
-    private PostDto fromPost(final Post post){
+    private PostResponse fromPost(final Post post){
         PostStats postStats = postStatsRepository.getByPostId(post.getId());
         postStats.incrementViewCount();
 
         Member member = memberRepository.getById(post.getMemberId());
 
-        return PostDto.builder()
-                .postBasic(PostBasicDto.from(post))
-                .postCounter( PostCounterDto.from(postStats))
-                .poster(PosterDto.from(member))
+        return PostResponse.builder()
+                .postBasic(PostBasicResponse.from(post))
+                .postCounter( PostCounterResponse.from(postStats))
+                .poster(PosterResponse.from(member))
                 .build();
     }
 
     @Transactional
     @Override
-    public PostBasicDto patchPost(final long postId, final PostRequestDto postRequestDto) {
+    public PostBasicResponse patchPost(final long postId, final PostRequest postRequest) {
         Post post = postRepository.getById(postId);
         authService.checkAccountOwner(post.getMemberId());
 
-        post.updateTitle(postRequestDto.title());
-        post.updateContents(postRequestDto.contents());
-        post.updateImageUrl(postRequestDto.imageUrl());
+        post.updateTitle(postRequest.title());
+        post.updateContents(postRequest.contents());
+        post.updateImageUrl(postRequest.imageUrl());
 
-        return PostBasicDto.from(post);
+        return PostBasicResponse.from(post);
     }
 
     @Transactional

@@ -4,14 +4,14 @@ import com.ktb.community.domain.member.Member;
 import lombok.Builder;
 
 @Builder
-public record PosterDto(
+public record PosterResponse(
         long memberId,
         String nickname,
         String imageUrl
 ) {
 
-    public static PosterDto from(Member member) {
-        return PosterDto.builder()
+    public static PosterResponse from(Member member) {
+        return PosterResponse.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .imageUrl(member.getImageUrl())

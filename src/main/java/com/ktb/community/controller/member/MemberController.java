@@ -1,11 +1,11 @@
 package com.ktb.community.controller.member;
 
 import com.ktb.community.dto.Response;
-import com.ktb.community.dto.member.request.MemberPatchDto;
-import com.ktb.community.dto.member.request.MemberPostDto;
-import com.ktb.community.dto.member.request.PasswordPatchDto;
+import com.ktb.community.dto.member.request.MemberPatchRequest;
+import com.ktb.community.dto.member.request.MemberPostRequest;
+import com.ktb.community.dto.member.request.PasswordRequest;
 import com.ktb.community.dto.member.response.LoginResponse;
-import com.ktb.community.dto.member.response.MemberDto;
+import com.ktb.community.dto.member.response.MemberResponse;
 import com.ktb.community.global.annotation.AccountOwner;
 import com.ktb.community.global.annotation.Nickname;
 import com.ktb.community.service.member.MemberService;
@@ -24,8 +24,8 @@ public class MemberController {
     }
 
     @PostMapping("")
-    public LoginResponse signUp(final @RequestBody @Valid MemberPostDto memberPostDto) {
-        return memberService.save(memberPostDto);
+    public LoginResponse signUp(final @RequestBody @Valid MemberPostRequest memberPostRequest) {
+        return memberService.save(memberPostRequest);
     }
 
     @GetMapping("/nickname-validation")
@@ -40,22 +40,22 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}/profile")
-    public MemberDto getMemberProfile(@PathVariable("memberId") final long memberId) {
+    public MemberResponse getMemberProfile(@PathVariable("memberId") final long memberId) {
         return memberService.getMemberProfile(memberId);
     }
 
     @PatchMapping("/{memberId}/profile")
     @AccountOwner
-    public MemberDto patchMemberProfile(@PathVariable("memberId") final long memberId,
-                                        @RequestBody @Valid final MemberPatchDto memberPatchDto) {
-        return memberService.updateMemberProfile(memberId, memberPatchDto);
+    public MemberResponse patchMemberProfile(@PathVariable("memberId") final long memberId,
+                                             @RequestBody @Valid final MemberPatchRequest memberPatchRequest) {
+        return memberService.updateMemberProfile(memberId, memberPatchRequest);
     }
 
     @PatchMapping("/{memberId}/password")
     @AccountOwner
     public Response patchMemberPassword(@PathVariable("memberId") final long memberId,
-                                    @RequestBody @Valid final PasswordPatchDto passwordPatchDto) {
-        return memberService.updateMemberPassword(memberId, passwordPatchDto);
+                                    @RequestBody @Valid final PasswordRequest passwordRequest) {
+        return memberService.updateMemberPassword(memberId, passwordRequest);
     }
 
     @PatchMapping("/{memberId}")

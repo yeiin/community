@@ -116,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
         long authId = Long.parseLong(authentication.getPrincipal().toString());
 
         if(authId != memberId) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "다른 사용자의 계정에는 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "다른 사용자의 계정에는 접근할 수 없습니다.");
         }
 
         return true;

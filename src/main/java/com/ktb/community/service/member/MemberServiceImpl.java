@@ -2,11 +2,11 @@ package com.ktb.community.service.member;
 
 import com.ktb.community.domain.member.Member;
 import com.ktb.community.dto.Response;
-import com.ktb.community.dto.member.request.MemberPatchDto;
-import com.ktb.community.dto.member.request.MemberPostDto;
-import com.ktb.community.dto.member.request.PasswordPatchDto;
+import com.ktb.community.dto.member.request.MemberPatchRequest;
+import com.ktb.community.dto.member.request.MemberPostRequest;
+import com.ktb.community.dto.member.request.PasswordRequest;
 import com.ktb.community.dto.member.response.LoginResponse;
-import com.ktb.community.dto.member.response.MemberDto;
+import com.ktb.community.dto.member.response.MemberResponse;
 import com.ktb.community.global.encrypt.EncryptEncoder;
 import com.ktb.community.repository.member.MemberRepository;
 import com.ktb.community.service.auth.AuthService;
@@ -30,16 +30,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public LoginResponse save(final MemberPostDto memberPostDto){
-        nicknameCheck(memberPostDto.nickname());
-        emailCheck(memberPostDto.email());
+    public LoginResponse save(final MemberPostRequest memberPostRequest){
+        nicknameCheck(memberPostRequest.nickname());
+        emailCheck(memberPostRequest.email());
 
         Member member = Member.builder()
-                .email(memberPostDto.email())
-                .nickname(memberPostDto.nickname())
-                .password(encryptEncoder.bcryptEncrypt(memberPostDto.password()))
+                .email(memberPostRequest.email())
+                .nickname(memberPostRequest.nickname())
+                .password(encryptEncoder.bcryptEncrypt(memberPostRequest.password()))
                 .state(true)
-                .imageUrl(memberPostDto.imageUrl())
+                .imageUrl(memberPostRequest.imageUrl())
                 .build();
 
         memberRepository.save(member);
@@ -62,30 +62,30 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional(readOnly = true)
     @Override
-    public MemberDto getMemberProfile(final long memberId) {
+    public MemberResponse getMemberProfile(final long memberId) {
         Member member = memberRepository.getById(memberId);
-        return MemberDto.from(member);
+        return MemberResponse.from(member);
     }
 
     @Transactional
     @Override
-    public MemberDto updateMemberProfile(final long memberId, final MemberPatchDto memberPatchDto) {
-        nicknameCheck(memberPatchDto.nickname());
+    public MemberResponse updateMemberProfile(final long memberId, final MemberPatchRequest memberPatchRequest) {
+        nicknameCheck(memberPatchRequest.nickname());
         Member member = memberRepository.getById(memberId);
 
-        member.updateNickname(memberPatchDto.nickname());
-        if(memberPatchDto.imageUrl() != null) {
-            member.updateImageUrl(memberPatchDto.imageUrl());
+        member.updateNickname(memberPatchRequest.nickname());
+        if(memberPatchRequest.imageUrl() != null) {
+            member.updateImageUrl(memberPatchRequest.imageUrl());
         }
 
-        return MemberDto.from(member);
+        return MemberResponse.from(member);
     }
 
     @Transactional
     @Override
-    public Response updateMemberPassword(final long memberId, final PasswordPatchDto passwordPatchDto) {
+    public Response updateMemberPassword(final long memberId, final PasswordRequest passwordRequest) {
         Member member = memberRepository.getById(memberId);
-        member.updatePassword(encryptEncoder.bcryptEncrypt(passwordPatchDto.password()));
+        member.updatePassword(encryptEncoder.bcryptEncrypt(passwordRequest.password()));
 
         return Response.of(HttpStatus.OK, "패스워드 변경에 성공했습니다.");
     }

@@ -1,18 +1,18 @@
 package com.ktb.community.service.member;
 
 import com.ktb.community.dto.Response;
-import com.ktb.community.dto.member.request.MemberPatchDto;
-import com.ktb.community.dto.member.request.MemberPostDto;
-import com.ktb.community.dto.member.request.PasswordPatchDto;
+import com.ktb.community.dto.member.request.MemberPatchRequest;
+import com.ktb.community.dto.member.request.MemberPostRequest;
+import com.ktb.community.dto.member.request.PasswordRequest;
 import com.ktb.community.dto.member.response.LoginResponse;
-import com.ktb.community.dto.member.response.MemberDto;
+import com.ktb.community.dto.member.response.MemberResponse;
 
 public interface MemberService {
-    LoginResponse save(final MemberPostDto memberPostDto);
+    LoginResponse save(final MemberPostRequest memberPostRequest);
     Response nicknameValidate(final String nickname);
     Response emailValidate(final String email);
-    MemberDto getMemberProfile(final long memberId);
-    MemberDto updateMemberProfile(final long memberId, final MemberPatchDto memberPatchDto);
-    Response updateMemberPassword(final long memberId, final PasswordPatchDto passwordPatchDto);
+    MemberResponse getMemberProfile(final long memberId);
+    MemberResponse updateMemberProfile(final long memberId, final MemberPatchRequest memberPatchRequest);
+    Response updateMemberPassword(final long memberId, final PasswordRequest passwordRequest);
     Response softDeleteMember(final long memberId);
 }
