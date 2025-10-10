@@ -63,8 +63,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public MemberDto getMemberProfile(final long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+        Member member = memberRepository.getById(memberId);
         return MemberDto.from(member);
     }
 
@@ -72,8 +71,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto updateMemberProfile(final long memberId, final MemberPatchDto memberPatchDto) {
         nicknameCheck(memberPatchDto.nickname());
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+        Member member = memberRepository.getById(memberId);
 
         member.updateNickname(memberPatchDto.nickname());
         if(memberPatchDto.imageUrl() != null) {
@@ -86,9 +84,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Response updateMemberPassword(final long memberId, final PasswordPatchDto passwordPatchDto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
-
+        Member member = memberRepository.getById(memberId);
         member.updatePassword(encryptEncoder.bcryptEncrypt(passwordPatchDto.password()));
 
         return Response.of(HttpStatus.OK, "패스워드 변경에 성공했습니다.");
@@ -109,9 +105,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Response softDeleteMember(final long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
-
+        Member member = memberRepository.getById(memberId);
         member.updateState(false);
         authService.deleteAuthByMemberId(memberId);
         return Response.of(HttpStatus.OK, "회원 탈퇴에 성공했습니다.");

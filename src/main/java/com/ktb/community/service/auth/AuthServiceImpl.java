@@ -65,8 +65,7 @@ public class AuthServiceImpl implements AuthService {
         if(auth.isPresent()) {
             auth.get().updateRefreshTokenHash(encryptEncoder.sha256Encrypt(refreshToken));
         }else {
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+            Member member = memberRepository.getById(memberId);
             authRepository.save(new Auth(member, encryptEncoder.sha256Encrypt(refreshToken)));
         }
     }
