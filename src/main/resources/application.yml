@@ -20,3 +20,8 @@ spring:
   h2:
     console:
       enabled: true
+
+  jwt:
+    key: ${JWT_KEY}
+    access_exp_time: ${ACCESS_EXP}
+    refresh_exp_time: ${REFRESH_EXP}

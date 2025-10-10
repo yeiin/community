@@ -18,7 +18,7 @@ public class PostLike extends BaseTime {
     private long postId;
     private long memberId;
 
-    public PostLike(long postId, long memberId) {
+    public PostLike(final long postId, final long memberId) {
         this.postId = postId;
         this.memberId = memberId;
     }
