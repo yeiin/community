@@ -40,6 +40,10 @@ public class PostStats {
         likeCount--;
     }
 
+    public void incrementCommentCount() {
+        commentCount++;
+    }
+
     public void incrementViewCount() {
         viewCount++;
     }
