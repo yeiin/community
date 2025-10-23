@@ -59,21 +59,25 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public PostResponses getPosts(final Long lastSeenId) {
+    public PostResponses getPosts(final long memberId, final Long lastSeenId) {
         List<Post> postList = postRepository.getPostsForInfiniteScroll(lastSeenId, PageRequest.of(0, 10));
-        List<PostResponse> posts = postList.stream().map(post -> fromPost(post, false)).toList();
+        List<PostResponse> posts = postList.stream()
+                .map(post -> fromPost(post, false, memberId, false))
+                .toList();
 
         return new PostResponses(posts);
     }
 
     @Transactional
     @Override
-    public PostResponse getPost(final long postId) {
+    public PostResponse getPost(final long memberId, final long postId) {
         Post post = postRepository.getById(postId);
-        return fromPost(post,true );
+        Optional<PostLike> postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId);
+
+        return fromPost(post,true, memberId, postLike.isPresent());
     }
 
-    private PostResponse fromPost(final Post post, final boolean isIncrView) {
+    private PostResponse fromPost(final Post post, final boolean isIncrView, final long loginId, final boolean isLike) {
         PostStats postStats = postStatsRepository.getByPostId(post.getId());
         if(isIncrView) {
             postStats.incrementViewCount();
@@ -83,7 +87,8 @@ public class PostServiceImpl implements PostService {
         return PostResponse.builder()
                 .postBasic(PostBasicResponse.from(post))
                 .postCounter(PostCounterResponse.from(postStats))
-                .poster(PosterResponse.from(member))
+                .poster(PosterResponse.from(member,loginId))
+                .isLike(isLike)
                 .build();
     }
 

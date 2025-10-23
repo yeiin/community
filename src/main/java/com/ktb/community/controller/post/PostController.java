@@ -26,13 +26,14 @@ public class PostController {
     }
 
     @GetMapping("")
-    public PostResponses getPosts(@RequestParam(value = "lastSeenId", required = false) final Long lastSeenId){
-        return postService.getPosts(lastSeenId);
+    public PostResponses getPosts(@RequestParam(value = "lastSeenId", required = false) final Long lastSeenId,
+                                  @Login long memberId){
+        return postService.getPosts(memberId, lastSeenId);
     }
 
     @GetMapping("/{postId}")
-    public PostResponse getPost(@PathVariable("postId") final long postId){
-        return postService.getPost(postId);
+    public PostResponse getPost(@PathVariable("postId") final long postId, @Login long memberId){
+        return postService.getPost(memberId, postId);
     }
 
     @PatchMapping("/{postId}")

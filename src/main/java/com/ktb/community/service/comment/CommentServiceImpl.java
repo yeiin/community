@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional(readOnly = true)
     @Override
-    public CommentResponses getCommentsByPostId(final long postId, final Long lastSeenId) {
+    public CommentResponses getCommentsByPostId(final long postId, final long memberId, final Long lastSeenId) {
 
         List<Comment> commentList = commentRepository.findAllByPostIdForInfiniteScroll(
                 postId,
@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentResponse> comments = commentList.stream()
                 .map(c -> {
                     CommentBasicResponse commentBasicResponse = CommentBasicResponse.from(c);
-                    PosterResponse posterResponse = PosterResponse.from(memberRepository.getById(c.getMemberId()));
+                    PosterResponse posterResponse = PosterResponse.from(memberRepository.getById(c.getMemberId()), memberId);
                     return new CommentResponse(commentBasicResponse, posterResponse);})
                 .toList();
 
@@ -99,6 +99,10 @@ public class CommentServiceImpl implements CommentService {
         authService.checkAccountOwner(comment.getMemberId());
 
         commentRepository.delete(comment);
+
+        PostStats postStats = postStatsRepository.getByPostId(postId);
+        postStats.decrementCommentCount();
+
         return Response.of(HttpStatus.OK, "댓글 삭제에 성공했습니다.");
     }
 }

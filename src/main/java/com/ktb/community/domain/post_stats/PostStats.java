@@ -44,6 +44,10 @@ public class PostStats {
         commentCount++;
     }
 
+    public void decrementCommentCount() {
+        commentCount--;
+    }
+
     public void incrementViewCount() {
         viewCount++;
     }

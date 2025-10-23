@@ -19,9 +19,9 @@ public class CommentController {
     }
 
     @GetMapping("")
-    public CommentResponses getComment(@PathVariable long postId,
+    public CommentResponses getComments(@PathVariable long postId, @Login long memberId,
                                        @RequestParam(value = "lastSeenId", required = false) Long lastSeenId) {
-        return commentService.getCommentsByPostId(postId, lastSeenId);
+        return commentService.getCommentsByPostId(postId, memberId, lastSeenId);
     }
 
     @PostMapping("")

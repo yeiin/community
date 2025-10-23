@@ -8,8 +8,8 @@ import com.ktb.community.dto.post.response.PostResponses;
 
 public interface PostService {
     PostBasicResponse savePost(final PostRequest postRequest, final long memberId);
-    PostResponses getPosts(final Long lastSeenId);
-    PostResponse getPost(final long postId);
+    PostResponses getPosts(final long memberId, final Long lastSeenId);
+    PostResponse getPost(final long memberId, final long postId);
     PostBasicResponse patchPost(final long postId, final PostRequest postRequest);
     Response deletePost(final long postId);
     Response likePost(final long postId, final long memberId);
