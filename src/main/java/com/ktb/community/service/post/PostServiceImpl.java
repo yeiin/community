@@ -57,32 +57,38 @@ public class PostServiceImpl implements PostService {
         return PostBasicResponse.from(postRepository.save(post));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
-    public PostResponses getPosts(final Long lastSeenId) {
+    public PostResponses getPosts(final long memberId, final Long lastSeenId) {
         List<Post> postList = postRepository.getPostsForInfiniteScroll(lastSeenId, PageRequest.of(0, 10));
-        List<PostResponse> posts = postList.stream().map(this::fromPost).toList();
+        List<PostResponse> posts = postList.stream()
+                .map(post -> fromPost(post, false, memberId, false))
+                .toList();
 
         return new PostResponses(posts);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
-    public PostResponse getPost(final long postId) {
+    public PostResponse getPost(final long memberId, final long postId) {
         Post post = postRepository.getById(postId);
-        return fromPost(post);
+        Optional<PostLike> postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId);
+
+        return fromPost(post,true, memberId, postLike.isPresent());
     }
 
-    private PostResponse fromPost(final Post post){
+    private PostResponse fromPost(final Post post, final boolean isIncrView, final long loginId, final boolean isLike) {
         PostStats postStats = postStatsRepository.getByPostId(post.getId());
-        postStats.incrementViewCount();
-
+        if(isIncrView) {
+            postStats.incrementViewCount();
+        }
         Member member = memberRepository.getById(post.getMemberId());
 
         return PostResponse.builder()
                 .postBasic(PostBasicResponse.from(post))
-                .postCounter( PostCounterResponse.from(postStats))
-                .poster(PosterResponse.from(member))
+                .postCounter(PostCounterResponse.from(postStats))
+                .poster(PosterResponse.from(member,loginId))
+                .isLike(isLike)
                 .build();
     }
 
@@ -108,7 +114,7 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
         postLikeRepository.deleteAllByPostId(postId);
 
-        return Response.of(HttpStatus.OK,"게시물 삭제에 성공했습니다.");
+        return Response.of(HttpStatus.OK, "게시물 삭제에 성공했습니다.");
     }
 
     @Transactional
@@ -141,3 +147,4 @@ public class PostServiceImpl implements PostService {
         return Response.of(HttpStatus.OK, "게시물 좋아요 취소에 성공했습니다.");
     }
 }
+        

@@ -2,6 +2,7 @@ package com.ktb.community.service.comment;
 
 import com.ktb.community.domain.comment.Comment;
 import com.ktb.community.domain.post.Post;
+import com.ktb.community.domain.post_stats.PostStats;
 import com.ktb.community.dto.Response;
 import com.ktb.community.dto.comment.request.CommentRequest;
 import com.ktb.community.dto.comment.response.CommentBasicResponse;
@@ -11,6 +12,7 @@ import com.ktb.community.dto.post.response.PosterResponse;
 import com.ktb.community.repository.comment.CommentRepository;
 import com.ktb.community.repository.member.MemberRepository;
 import com.ktb.community.repository.post.PostRepository;
+import com.ktb.community.repository.post_stats.PostStatsRepository;
 import com.ktb.community.service.auth.AuthService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -24,20 +26,23 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final PostStatsRepository postStatsRepository;
     private final MemberRepository memberRepository;
     private final AuthService authService;
 
     public CommentServiceImpl(final CommentRepository commentRepository, final PostRepository postRepository,
-                              final MemberRepository memberRepository, final AuthService authService) {
+                              final PostStatsRepository postStatsRepository, final MemberRepository memberRepository,
+                              final AuthService authService) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.postStatsRepository = postStatsRepository;
         this.memberRepository = memberRepository;
         this.authService = authService;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public CommentResponses getCommentsByPostId(final long postId, final Long lastSeenId) {
+    public CommentResponses getCommentsByPostId(final long postId, final long memberId, final Long lastSeenId) {
 
         List<Comment> commentList = commentRepository.findAllByPostIdForInfiniteScroll(
                 postId,
@@ -48,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentResponse> comments = commentList.stream()
                 .map(c -> {
                     CommentBasicResponse commentBasicResponse = CommentBasicResponse.from(c);
-                    PosterResponse posterResponse = PosterResponse.from(memberRepository.getById(c.getMemberId()));
+                    PosterResponse posterResponse = PosterResponse.from(memberRepository.getById(c.getMemberId()), memberId);
                     return new CommentResponse(commentBasicResponse, posterResponse);})
                 .toList();
 
@@ -64,6 +69,9 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = new Comment(postId, memberId, commentRequest.contents());
         commentRepository.save(comment);
+
+        PostStats postStats = postStatsRepository.getByPostId(postId);
+        postStats.incrementCommentCount();
 
         return CommentBasicResponse.from(comment);
     }
@@ -91,6 +99,10 @@ public class CommentServiceImpl implements CommentService {
         authService.checkAccountOwner(comment.getMemberId());
 
         commentRepository.delete(comment);
+
+        PostStats postStats = postStatsRepository.getByPostId(postId);
+        postStats.decrementCommentCount();
+
         return Response.of(HttpStatus.OK, "댓글 삭제에 성공했습니다.");
     }
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 public record PostResponse(
         PostBasicResponse postBasic,
         PostCounterResponse postCounter,
-        PosterResponse poster
+        PosterResponse poster,
+        boolean isLike
 ) {
 }

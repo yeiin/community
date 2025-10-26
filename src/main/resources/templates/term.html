@@ -1,0 +1,167 @@
+<!-- templates/terms.html -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${serviceName} + ' 이용 약관'">커뮤니티 서비스 이용 약관</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root{
+            --ink:#121212;--muted:#666;--line:#e9e9ef;--brand:#6f6be8;--bg:#fafafc;
+        }
+        html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+        .container{max-width:920px;margin:48px auto;padding:0 20px;}
+        h1{font-size:28px;margin:0 0 8px 0;}
+        .meta{color:var(--muted);font-size:13px;margin-bottom:28px}
+        .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.03);overflow:hidden}
+        .card header{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}
+        .badge{font-size:12px;color:#fff;background:var(--brand);padding:2px 8px;border-radius:999px}
+        .content{padding:24px 24px 8px}
+        h2{font-size:18px;margin:28px 0 12px}
+        ol{margin:0;padding-left:18px}
+        .toc{display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px;border-bottom:1px dashed var(--line);background:#fcfcff}
+        .toc a{font-size:13px;text-decoration:none;color:var(--brand);padding:6px 10px;border:1px solid #e8e8ff;border-radius:10px}
+        .foot{padding:18px 20px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+        a{color:var(--brand)}
+        .callout{background:#f7f7ff;border:1px solid #ececff;padding:12px 14px;border-radius:12px;color:#3b3b7a}
+        .num{font-weight:600}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${serviceName} + ' 이용 약관'">아무말대잔치 커뮤니티 이용 약관</h1>
+    <div class="meta">
+        <span>버전: <span th:text="${tosVersion}">v1.0</span></span> ·
+        <span>시행일: <span th:text="${#temporals.format(effectiveDate, 'yyyy.MM.dd')}">2025.10.23</span></span> ·
+        <span th:if="${companyName != null}" th:text="'운영사: ' + ${companyName}">운영사: Your Company</span>
+    </div>
+
+    <section class="card">
+        <header>
+            <span class="badge">Terms</span>
+            <div>
+                <div><strong th:text="${serviceName}">서비스명</strong> 커뮤니티 이용에 관한 권리·의무 및 책임사항을 규정합니다.</div>
+                <div class="callout" style="margin-top:6px">
+                    본 약관은 「전자상거래법」, 「정보통신망법」 등 대한민국 법령을 준수하며, 상충 시 관련 법령이 우선합니다.
+                </div>
+            </div>
+        </header>
+
+        <!-- 목차 -->
+        <nav class="toc">
+            <a href="#s1">1. 목적 및 정의</a>
+            <a href="#s2">2. 약관의 효력/변경</a>
+            <a href="#s3">3. 계정 및 인증</a>
+            <a href="#s4">4. 이용자의 의무</a>
+            <a href="#s5">5. 커뮤니티 콘텐츠</a>
+            <a href="#s6">6. 금지행위</a>
+            <a href="#s7">7. 서비스 제공/변경</a>
+            <a href="#s8">8. 개인정보</a>
+            <a href="#s9">9. 지식재산권</a>
+            <a href="#s10">10. 광고/제휴</a>
+            <a href="#s11">11. 신고/권리침해</a>
+            <a href="#s12">12. 계약 해지/정지</a>
+            <a href="#s13">13. 면책/책임 제한</a>
+            <a href="#s14">14. 준거법/분쟁</a>
+            <a href="#s15">15. 고지 및 연락</a>
+        </nav>
+
+        <div class="content">
+            <h2 id="s1">1. 목적 및 정의</h2>
+            <ol>
+                <li><span class="num">목적</span>: 본 약관은 <span th:text="${companyName}">회사</span>(이하 “회사”)가 제공하는 <span th:text="${serviceName}">서비스</span>(이하 “서비스”)의 이용과 관련하여 회사와 이용자 간 권리·의무 및 책임사항을 정함을 목적으로 합니다.</li>
+                <li><span class="num">정의</span>: “이용자”란 본 약관에 동의하고 서비스에 접속하여 회사가 제공하는 기능을 이용하는 회원 및 비회원을 말합니다.</li>
+            </ol>
+
+            <h2 id="s2">2. 약관의 효력 및 변경</h2>
+            <ol>
+                <li>본 약관은 서비스 초기 화면 또는 설정 메뉴에 게시하여 공지하며, 게시 또는 통지로 효력이 발생합니다.</li>
+                <li>회사는 관련 법령을 위배하지 않는 범위에서 약관을 개정할 수 있으며, 중요한 변경은 시행 7일 전(이용자에게 불리하거나 중대한 변경은 30일 전)부터 공지합니다.</li>
+            </ol>
+
+            <h2 id="s3">3. 계정 및 인증</h2>
+            <ol>
+                <li>이용자는 정확한 정보를 제공해야 하며, 타인의 명의·이메일을 사용할 수 없습니다.</li>
+                <li>계정 보안은 이용자 책임이며, 분실·도용이 의심되면 즉시 회사에 알리고 안내에 따라야 합니다.</li>
+            </ol>
+
+            <h2 id="s4">4. 이용자의 의무</h2>
+            <ol>
+                <li>법령, 약관, 운영정책 및 커뮤니티 가이드를 준수해야 합니다.</li>
+                <li>서비스의 정상 운영을 방해해서는 안 됩니다(자동수집, 서버공격, 비정상 트래픽 유발 등).</li>
+            </ol>
+
+            <h2 id="s5">5. 커뮤니티 콘텐츠(게시물 등)</h2>
+            <ol>
+                <li>게시물의 저작권은 원칙적으로 해당 이용자에게 귀속됩니다.</li>
+                <li>이용자는 회사에 대해 서비스 운영·노출·홍보를 위한 범위 내에서 게시물을 전 세계적으로 비독점적·무상으로 이용(저장, 복제, 수정, 공개전송, 전시, 배포)할 수 있는 라이선스를 부여합니다. 이용자는 게시 삭제 시 합리적 범위 내에서 회사는 추가 노출을 중단하되, 백업/법령상 보존은 제외됩니다.</li>
+                <li>타인의 권리를 침해하지 않아야 하며, 분쟁 발생 시 당사자 해결을 원칙으로 합니다.</li>
+            </ol>
+
+            <h2 id="s6">6. 금지행위</h2>
+            <ol>
+                <li>불법·유해정보 게시, 명예훼손/차별/혐오 표현, 음란물/청소년유해물 유포</li>
+                <li>저작권·상표권 등 타인 권리 침해, 개인 정보의 무단 수집·공개</li>
+                <li>스팸/홍보 도배, 리프로그래밍/역공학/비인가 자동화 수단 사용</li>
+                <li>운영 방침을 우회하거나 허위 신고를 반복하는 행위</li>
+            </ol>
+
+            <h2 id="s7">7. 서비스 제공, 변경 및 중단</h2>
+            <ol>
+                <li>회사는 안정적 제공을 위해 노력하되, 정기/긴급 점검, 서비스 개편, 운영상·기술상 필요 등으로 일부 또는 전부를 변경·중단할 수 있습니다. 이 경우 사전에 공지하되, 불가피한 경우 사후 통지할 수 있습니다.</li>
+            </ol>
+
+            <h2 id="s8">8. 개인정보 보호</h2>
+            <ol>
+                <li>회사는 별도의 「개인정보처리방침」에 따라 개인정보를 처리합니다. 이용자는 동 정책을 확인해야 합니다.</li>
+            </ol>
+
+            <h2 id="s9">9. 지식재산권</h2>
+            <ol>
+                <li>서비스 및 소프트웨어에 관한 권리는 회사에 귀속합니다. 약관에 따른 사용권만 부여되며, 소유권은 이전되지 않습니다.</li>
+            </ol>
+
+            <h2 id="s10">10. 광고 및 제휴</h2>
+            <ol>
+                <li>회사는 서비스 내 배너, 알림, 이메일 등으로 광고를 제공할 수 있습니다. 수신 거부는 관련 법령과 정책에 따릅니다.</li>
+            </ol>
+
+            <h2 id="s11">11. 신고 및 권리침해 대응</h2>
+            <ol>
+                <li>이용자는 신고 기능 또는 연락처로 권리 침해를 신고할 수 있습니다. 회사는 관련 법령 및 내부 절차에 따라 게시 중단, 반론권 부여 등 필요한 조치를 합니다.</li>
+            </ol>
+
+            <h2 id="s12">12. 계약 해지 및 이용제한</h2>
+            <ol>
+                <li>이용자는 언제든지 계정 탈퇴를 요청할 수 있습니다.</li>
+                <li>회사는 약관/정책 위반 시 경고, 게시 제한, 계정 정지/영구차단 등 단계적 조치를 할 수 있습니다.</li>
+            </ol>
+
+            <h2 id="s13">13. 면책 및 책임의 제한</h2>
+            <ol>
+                <li>천재지변, IDC/네트워크 장애, 불가항력으로 인한 손해에 대해 회사는 책임을 지지 않습니다.</li>
+                <li>이용자 상호 간 또는 제3자와의 분쟁은 당사자 간 해결을 원칙으로 하며, 회사의 고의·중과실이 없는 한 책임을 지지 않습니다.</li>
+                <li>회사의 총 책임은 유료 서비스가 있는 경우 최근 3개월간 이용자가 지급한 금액을 한도로 합니다(무과실 책임 제외).</li>
+            </ol>
+
+            <h2 id="s14">14. 준거법 및 분쟁 해결</h2>
+            <ol>
+                <li>본 약관은 대한민국 법령을 준거법으로 합니다.</li>
+                <li>분쟁은 협의로 해결하되, 협의가 되지 않는 경우 관할법원은 회사의 본점 소재지 관할로 합니다.</li>
+            </ol>
+
+            <h2 id="s15">15. 고지 및 연락</h2>
+            <ol>
+                <li>회사 공지는 서비스 내 게시 또는 이메일 등으로 할 수 있습니다.</li>
+                <li>연락처: <a th:href="'mailto:' + ${contactEmail}" th:text="${contactEmail}">support@example.com</a></li>
+                <li th:if="${companyAddress != null}">주소: <span th:text="${companyAddress}">서울시 어딘가 123</span></li>
+            </ol>
+        </div>
+
+        <footer class="foot">
+            <span th:text="'© ' + ${#temporals.format(#temporals.createNow(), 'yyyy')} + ' ' + ${companyName} + '. All rights reserved.'">© 2025 Your Company. All rights reserved.</span>
+        </footer>
+    </section>
+</div>
+</body>
+</html>
