@@ -25,3 +25,15 @@ spring:
     key: ${JWT_KEY}
     access_exp_time: ${ACCESS_EXP}
     refresh_exp_time: ${REFRESH_EXP}
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 40MB
+    server:
+      tomcat:
+        max-swallow-size: 40MB
+
+file:
+  upload-dir: ${LOCAL_UPLOAD_DIR}
+  image-base-url: ${IMAGE_BASE_URL}

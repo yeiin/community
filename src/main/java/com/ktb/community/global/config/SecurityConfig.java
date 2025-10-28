@@ -42,7 +42,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         request -> {
                             request.requestMatchers(HttpMethod.POST, "/members").permitAll();
-                            request.requestMatchers(HttpMethod.GET, "/members/nickname-validation", "members/email-validation").permitAll();
+                            request.requestMatchers("/images/**").permitAll();
+                            request.requestMatchers(HttpMethod.GET, "/members/nickname-validation", "/members/email-validation").permitAll();
                             request.requestMatchers( "/auth").permitAll().requestMatchers(HttpMethod.DELETE, "/auth").authenticated();
                             request.anyRequest().authenticated();
                         }
