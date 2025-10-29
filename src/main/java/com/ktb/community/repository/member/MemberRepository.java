@@ -9,5 +9,6 @@ public interface MemberRepository {
     Member getById(final long id);
     Optional<Member> findByEmail(final String email);
     boolean existsNickname(String nickname);
+    Optional<Member> findByNickname(String nickname);
     boolean existsEmail(String email);
 }

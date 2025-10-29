@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
@@ -70,10 +72,12 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public MemberResponse updateMemberProfile(final long memberId, final MemberPatchRequest memberPatchRequest) {
-        nicknameCheck(memberPatchRequest.nickname());
-        Member member = memberRepository.getById(memberId);
 
+        nicknameCheck(memberId, memberPatchRequest.nickname());
+
+        Member member = memberRepository.getById(memberId);
         member.updateNickname(memberPatchRequest.nickname());
+
         if(memberPatchRequest.imageUrl() != null) {
             member.updateImageUrl(memberPatchRequest.imageUrl());
         }
@@ -92,6 +96,13 @@ public class MemberServiceImpl implements MemberService {
 
     private void nicknameCheck(final String nickname) {
         if(memberRepository.existsNickname(nickname)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.");
+        }
+    }
+
+    private void nicknameCheck(final long memberId, final String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+        if(member.isPresent() && member.get().getId() != memberId) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.");
         }
     }

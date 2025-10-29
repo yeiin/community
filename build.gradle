@@ -66,6 +66,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
+	//scrimage
+	implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"
+	implementation "com.sksamuel.scrimage:scrimage-formats-extra:4.0.32"
+	implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"
+
+	//io
+	implementation 'commons-io:commons-io:2.6'
+
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
