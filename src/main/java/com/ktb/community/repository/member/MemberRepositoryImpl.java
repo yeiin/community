@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository
@@ -29,6 +30,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Optional<Member> findByEmail(final String email) {
         return memberJpaRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<Member> findByNickname(String nickname){
+        return memberJpaRepository.findByNickname(nickname);
     }
 
     @Override
