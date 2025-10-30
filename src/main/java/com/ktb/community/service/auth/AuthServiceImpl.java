@@ -12,12 +12,13 @@ import com.ktb.community.repository.auth.AuthRepository;
 import com.ktb.community.repository.member.MemberRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -112,8 +113,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean checkAccountOwner(final long memberId) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        long authId = Long.parseLong(authentication.getPrincipal().toString());
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        HttpServletRequest request = attributes.getRequest();
+        long authId = Long.parseLong(request.getAttribute("memberId").toString());
 
         if(authId != memberId) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "다른 사용자의 계정에는 접근할 수 없습니다.");

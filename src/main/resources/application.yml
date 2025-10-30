@@ -37,3 +37,18 @@ spring:
 file:
   upload-dir: ${LOCAL_UPLOAD_DIR}
   image-base-url: ${IMAGE_BASE_URL}
+
+security:
+  notSecuredList:
+    - method: POST
+      path: /members
+    - method: ALL
+      path: /images/**
+    - method: GET
+      path: /members/nickname-validation
+    - method: GET
+      path: /members/email-validation
+    - method: POST
+      path: /auth
+    - method: PATCH
+      path: /auth

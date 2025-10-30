@@ -1,9 +1,8 @@
 package com.ktb.community.global.resolver;
 
 import com.ktb.community.global.annotation.Login;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -21,8 +20,10 @@ public class LoginResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return Long.parseLong(authentication.getPrincipal().toString());
+
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+
+        return Long.parseLong(request.getAttribute("memberId").toString());
     }
 }
 
