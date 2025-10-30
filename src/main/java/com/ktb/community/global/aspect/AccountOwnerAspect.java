@@ -2,8 +2,6 @@ package com.ktb.community.global.aspect;
 
 import com.ktb.community.global.annotation.AccountOwner;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.http.HttpStatus;

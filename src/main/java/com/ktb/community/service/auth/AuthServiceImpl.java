@@ -4,7 +4,6 @@ import com.ktb.community.domain.auth.Auth;
 import com.ktb.community.domain.member.Member;
 import com.ktb.community.dto.Response;
 import com.ktb.community.dto.auth.request.LoginRequest;
-import com.ktb.community.dto.auth.request.RefreshTokenRequest;
 import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.global.encrypt.EncryptEncoder;
 import com.ktb.community.global.jwt.JwtUtil;
@@ -12,10 +11,7 @@ import com.ktb.community.repository.auth.AuthRepository;
 import com.ktb.community.repository.member.MemberRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,18 +24,12 @@ import java.util.Optional;
 @Service("authService")
 public class AuthServiceImpl implements AuthService {
 
-    @Value("${spring.jwt.access_exp_time}")
-    private long accessExpTime;
-
-    @Value("${spring.jwt.refresh_exp_time}")
-    private long refreshExpTime;
-
     @PersistenceContext
     private EntityManager em;
 
     private final AuthRepository authRepository;
     private final MemberRepository memberRepository;
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
     private final EncryptEncoder encryptEncoder;
 
     public AuthServiceImpl(final AuthRepository authRepository, final MemberRepository memberRepository,
@@ -54,12 +44,10 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public LoginResponse createJwts(final long memberId) {
-        String accessToken = jwtUtil.createToken(memberId, accessExpTime);
-        String refreshToken = jwtUtil.createToken(memberId, refreshExpTime);
+        LoginResponse loginResponse = jwtUtil.createTokens(memberId);
+        saveAuth(memberId, loginResponse.refreshToken());
 
-        saveAuth(memberId, refreshToken);
-
-        return new LoginResponse(memberId, accessToken, refreshToken);
+        return loginResponse;
     }
 
     private void saveAuth(long memberId, String refreshToken) {
@@ -89,10 +77,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public LoginResponse updateWithRefreshToken(final RefreshTokenRequest refreshTokenRequest) {
-        jwtUtil.validateToken(refreshTokenRequest.refreshToken());
+    public LoginResponse updateWithRefreshToken(final String refreshToken) {
+        jwtUtil.validateToken(refreshToken);
 
-        Auth auth = authRepository.findByRefreshTokenHash(encryptEncoder.sha256Encrypt(refreshTokenRequest.refreshToken()))
+        Auth auth = authRepository.findByRefreshTokenHash(encryptEncoder.sha256Encrypt(refreshToken))
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "리프레쉬 토큰 정보를 찾을 수 없습니다."));
 
         return createJwts(auth.getMember().getId());
@@ -114,9 +102,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public boolean checkAccountOwner(final long memberId) {
-
-        ServletRequestAttributes attributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         HttpServletRequest request = attributes.getRequest();
         long authId = Long.parseLong(request.getAttribute("memberId").toString());

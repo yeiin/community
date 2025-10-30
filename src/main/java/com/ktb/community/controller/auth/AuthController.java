@@ -2,11 +2,11 @@ package com.ktb.community.controller.auth;
 
 import com.ktb.community.dto.Response;
 import com.ktb.community.dto.auth.request.LoginRequest;
-import com.ktb.community.dto.auth.request.RefreshTokenRequest;
 import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.global.annotation.AccountOwner;
 import com.ktb.community.global.provider.CookieProvider;
 import com.ktb.community.service.auth.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +31,9 @@ public class AuthController {
     }
 
     @PatchMapping("")
-    public LoginResponse updateWithRefreshToken(@RequestBody final RefreshTokenRequest refreshTokenRequest,
-                                                                final HttpServletResponse response){
-        LoginResponse loginResponse = authService.updateWithRefreshToken(refreshTokenRequest);
+    public LoginResponse updateWithRefreshToken(final HttpServletRequest request, final HttpServletResponse response){
+        String refreshToken = cookieProvider.getRefreshTokenCookie(request);
+        LoginResponse loginResponse = authService.updateWithRefreshToken(refreshToken);
         cookieProvider.setRefreshTokenCookie(response,loginResponse.refreshToken());
         return loginResponse;
     }
