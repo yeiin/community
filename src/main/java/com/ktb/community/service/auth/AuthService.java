@@ -3,7 +3,8 @@ package com.ktb.community.service.auth;
 import com.ktb.community.dto.Response;
 import com.ktb.community.dto.auth.request.LoginRequest;
 import com.ktb.community.dto.auth.request.RefreshTokenRequest;
-import com.ktb.community.dto.member.response.LoginResponse;
+import com.ktb.community.dto.auth.response.LoginResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
     LoginResponse createJwts(final long memberId);

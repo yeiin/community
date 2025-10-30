@@ -54,6 +54,5 @@ public class JwtUtil {
         }catch (JsonProcessingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "JSON PARSE EXCEPTION");
         }
-
     }
 }

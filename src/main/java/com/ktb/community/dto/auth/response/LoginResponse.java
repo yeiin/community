@@ -1,4 +1,4 @@
-package com.ktb.community.dto.member.response;
+package com.ktb.community.dto.auth.response;
 
 public record LoginResponse(
         long userId,
