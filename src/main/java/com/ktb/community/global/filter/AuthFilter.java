@@ -1,6 +1,10 @@
 package com.ktb.community.global.filter;
 
-import com.ktb.community.global.jwt.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ktb.community.dto.Response;
+import com.ktb.community.global.constant.StatusCode;
+import com.ktb.community.global.exception.CustomUnauthorizedException;
+import com.ktb.community.global.provider.JwtProvider;
 import com.ktb.community.global.validator.RouteValidator;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -16,17 +20,22 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
+import static com.ktb.community.global.constant.ExceptionConstant.INVALID_TOKEN;
+
 @Slf4j
 @Component
 @Order(1)
 public class AuthFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final RouteValidator routeValidator;
+    private final ObjectMapper objectMapper;
 
-    public AuthFilter(final JwtUtil jwtUtil, final RouteValidator routeValidator) {
-        this.jwtUtil = jwtUtil;
+
+    public AuthFilter(final JwtProvider jwtProvider, final RouteValidator routeValidator, final ObjectMapper objectMapper) {
+        this.jwtProvider = jwtProvider;
         this.routeValidator = routeValidator;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -41,22 +50,30 @@ public class AuthFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 양식의 토큰입니다.");
+            handleException(response,INVALID_TOKEN.message());
+            return;
         }
 
         String token = authorization.substring(7);
 
         try {
-            Claims claims = jwtUtil.validateToken(token);
+            Claims claims = jwtProvider.validateToken(token);
             long id = Long.parseLong(claims.getSubject());
 
             request.setAttribute("memberId", id);
+            filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 양식의 토큰입니다.");
+            handleException(response,INVALID_TOKEN.message());
         }
+    }
 
-        filterChain.doFilter(request, response);
+    private void handleException(HttpServletResponse response, String message) throws IOException {
+        Response errorResponse = new Response(StatusCode.UNAUTHORIZED.getStatusCode(), message);
+
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 
 }

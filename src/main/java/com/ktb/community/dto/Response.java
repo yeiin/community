@@ -3,12 +3,11 @@ package com.ktb.community.dto;
 import org.springframework.http.HttpStatus;
 
 public record Response(
-        int statusCode,
-        String statusMessage,
+        String statusCode,
         String message
 ) {
 
     public static Response of(final HttpStatus status, final String message) {
-        return new Response(status.value(), status.getReasonPhrase(), message);
+        return new Response(status.toString(), message);
     }
 }

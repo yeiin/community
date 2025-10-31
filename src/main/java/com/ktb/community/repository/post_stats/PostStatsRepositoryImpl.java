@@ -1,9 +1,10 @@
 package com.ktb.community.repository.post_stats;
 
 import com.ktb.community.domain.post_stats.PostStats;
-import org.springframework.http.HttpStatus;
+import com.ktb.community.global.exception.CustomNotFoundException;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
+
+import static com.ktb.community.global.constant.ExceptionConstant.POST_STATS_NOT_FOUND;
 
 @Repository
 public class PostStatsRepositoryImpl implements PostStatsRepository {
@@ -22,6 +23,6 @@ public class PostStatsRepositoryImpl implements PostStatsRepository {
     @Override
     public PostStats getByPostId(final long postId) {
         return postStatsJpaRepository.findById(postId)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물 집계 정보를 찾을 수 없습니다."));
+                .orElseThrow(()-> new CustomNotFoundException(POST_STATS_NOT_FOUND));
     }
 }

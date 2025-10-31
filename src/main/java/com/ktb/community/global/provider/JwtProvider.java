@@ -1,4 +1,4 @@
-package com.ktb.community.global.jwt;
+package com.ktb.community.global.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-public class JwtUtil {
+public class JwtProvider {
 
     @Value("${spring.jwt.access_exp_time}")
     private long accessExpTime;
@@ -29,7 +29,7 @@ public class JwtUtil {
 
     private final ObjectMapper objectMapper;
 
-    public JwtUtil(ObjectMapper objectMapper) {
+    public JwtProvider(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

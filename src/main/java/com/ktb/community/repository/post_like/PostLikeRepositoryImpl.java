@@ -1,11 +1,12 @@
 package com.ktb.community.repository.post_like;
 
 import com.ktb.community.domain.post_like.PostLike;
-import org.springframework.http.HttpStatus;
+import com.ktb.community.global.exception.CustomNotFoundException;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+
+import static com.ktb.community.global.constant.ExceptionConstant.POST_LIKE_NOT_FOUND;
 
 @Repository
 public class PostLikeRepositoryImpl implements PostLikeRepository {
@@ -30,7 +31,7 @@ public class PostLikeRepositoryImpl implements PostLikeRepository {
     @Override
     public PostLike getByPostIdAndMemberId(long postId, long memberId) {
         return postLikeJpaRepository.findByPostIdAndMemberId(postId, memberId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물의 좋아요 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomNotFoundException(POST_LIKE_NOT_FOUND));
     }
 
     @Override

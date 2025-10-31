@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @DeleteMapping("")
-    @AccountOwner
+    @AccountOwner(memberId = "#memberId")
     public Response logout(@RequestParam("memberId") final long memberId){
         return authService.logout(memberId);
     }

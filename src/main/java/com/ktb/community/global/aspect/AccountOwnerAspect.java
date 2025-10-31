@@ -1,12 +1,15 @@
 package com.ktb.community.global.aspect;
 
 import com.ktb.community.global.annotation.AccountOwner;
+import com.ktb.community.global.exception.CustomForbiddenException;
+import com.ktb.community.global.exception.CustomUnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
+
+import static com.ktb.community.global.constant.ExceptionConstant.ACCOUNT_FORBIDDEN;
+import static com.ktb.community.global.constant.ExceptionConstant.MEMBER_UNAUTHORIZED;
 
 @Aspect
 @Component
@@ -23,11 +26,11 @@ public class AccountOwnerAspect {
         Long memberId = (Long) request.getAttribute("memberId");
 
         if (memberId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new CustomUnauthorizedException(MEMBER_UNAUTHORIZED);
         }
 
         if(memberId != Long.parseLong(accountOwner.memberId())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "다른 사용자의 계정에는 접근할 수 없습니다.");
+            throw new CustomForbiddenException(ACCOUNT_FORBIDDEN);
         }
 
     }

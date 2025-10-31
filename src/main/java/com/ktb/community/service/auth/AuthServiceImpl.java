@@ -6,7 +6,10 @@ import com.ktb.community.dto.Response;
 import com.ktb.community.dto.auth.request.LoginRequest;
 import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.global.encrypt.EncryptEncoder;
-import com.ktb.community.global.jwt.JwtUtil;
+import com.ktb.community.global.exception.CustomBadRequestException;
+import com.ktb.community.global.exception.CustomForbiddenException;
+import com.ktb.community.global.exception.CustomNotFoundException;
+import com.ktb.community.global.provider.JwtProvider;
 import com.ktb.community.repository.auth.AuthRepository;
 import com.ktb.community.repository.member.MemberRepository;
 import jakarta.persistence.EntityManager;
@@ -21,6 +24,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static com.ktb.community.global.constant.CustomConstant.LOGOUT_SUCCESS;
+import static com.ktb.community.global.constant.ExceptionConstant.*;
+
 @Service("authService")
 public class AuthServiceImpl implements AuthService {
 
@@ -29,14 +35,14 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthRepository authRepository;
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final EncryptEncoder encryptEncoder;
 
     public AuthServiceImpl(final AuthRepository authRepository, final MemberRepository memberRepository,
-                           final JwtUtil jwtUtil, final EncryptEncoder encryptEncoder, final EntityManager em) {
+                           final JwtProvider jwtProvider, final EncryptEncoder encryptEncoder, final EntityManager em) {
         this.authRepository = authRepository;
         this.memberRepository = memberRepository;
-        this.jwtUtil = jwtUtil;
+        this.jwtProvider = jwtProvider;
         this.encryptEncoder = encryptEncoder;
         this.em = em;
     }
@@ -44,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public LoginResponse createJwts(final long memberId) {
-        LoginResponse loginResponse = jwtUtil.createTokens(memberId);
+        LoginResponse loginResponse = jwtProvider.createTokens(memberId);
         saveAuth(memberId, loginResponse.refreshToken());
 
         return loginResponse;
@@ -66,10 +72,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(final LoginRequest loginRequest) {
         Member member = memberRepository.findByEmail(loginRequest.email())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(()-> new CustomNotFoundException(MEMBER_NOT_FOUND));
 
         if(!encryptEncoder.bcryptIsMatch(loginRequest.password(), member.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호입니다.");
+            throw new CustomBadRequestException(PASSWORD_BAD_REQUEST);
         }
 
         return createJwts(member.getId());
@@ -78,10 +84,10 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public LoginResponse updateWithRefreshToken(final String refreshToken) {
-        jwtUtil.validateToken(refreshToken);
+        jwtProvider.validateToken(refreshToken);
 
         Auth auth = authRepository.findByRefreshTokenHash(encryptEncoder.sha256Encrypt(refreshToken))
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "리프레쉬 토큰 정보를 찾을 수 없습니다."));
+                .orElseThrow(()-> new CustomNotFoundException(AUTH_NOT_FOUND));
 
         return createJwts(auth.getMember().getId());
     }
@@ -90,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Response logout(final long memberId) {
         authRepository.deleteByMemberId(memberId);
-        return Response.of(HttpStatus.OK, "로그아웃에 성공했습니다.");
+        return Response.of(HttpStatus.OK, LOGOUT_SUCCESS.message());
     }
 
     @Transactional
@@ -108,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
         long authId = Long.parseLong(request.getAttribute("memberId").toString());
 
         if(authId != memberId) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "다른 사용자의 계정에는 접근할 수 없습니다.");
+            throw new CustomForbiddenException(ACCOUNT_FORBIDDEN);
         }
 
         return true;

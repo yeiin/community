@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AccountOwner {
-    String memberId() default "memberId";
+    String memberId() default "0L";
     String message() default "다른 사용자의 계정에는 접근할 수 없습니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

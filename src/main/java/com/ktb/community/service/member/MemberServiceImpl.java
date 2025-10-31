@@ -8,14 +8,17 @@ import com.ktb.community.dto.member.request.PasswordRequest;
 import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.dto.member.response.MemberResponse;
 import com.ktb.community.global.encrypt.EncryptEncoder;
+import com.ktb.community.global.exception.CustomConflictException;
 import com.ktb.community.repository.member.MemberRepository;
 import com.ktb.community.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+
+import static com.ktb.community.global.constant.ExceptionConstant.EMAIL_CONFLICT;
+import static com.ktb.community.global.constant.ExceptionConstant.NICKNAME_CONFLICT;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -96,20 +99,20 @@ public class MemberServiceImpl implements MemberService {
 
     private void nicknameCheck(final String nickname) {
         if(memberRepository.existsNickname(nickname)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.");
+            throw new CustomConflictException(NICKNAME_CONFLICT);
         }
     }
 
     private void nicknameCheck(final long memberId, final String nickname) {
         Optional<Member> member = memberRepository.findByNickname(nickname);
         if(member.isPresent() && member.get().getId() != memberId) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.");
+            throw new CustomConflictException(NICKNAME_CONFLICT);
         }
     }
 
     private void emailCheck(final String email) {
         if(memberRepository.existsEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
+            throw new CustomConflictException(EMAIL_CONFLICT);
         }
     }
 

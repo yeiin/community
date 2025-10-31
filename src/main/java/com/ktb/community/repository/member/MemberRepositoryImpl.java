@@ -1,11 +1,12 @@
 package com.ktb.community.repository.member;
 
 import com.ktb.community.domain.member.Member;
-import org.springframework.http.HttpStatus;
+import com.ktb.community.global.exception.CustomNotFoundException;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+
+import static com.ktb.community.global.constant.ExceptionConstant.MEMBER_NOT_FOUND;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
@@ -23,7 +24,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Member getById(final long id) {
         return memberJpaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomNotFoundException(MEMBER_NOT_FOUND));
     }
 
     @Override

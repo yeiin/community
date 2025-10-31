@@ -1,12 +1,13 @@
 package com.ktb.community.repository.comment;
 
 import com.ktb.community.domain.comment.Comment;
+import com.ktb.community.global.exception.CustomNotFoundException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+
+import static com.ktb.community.global.constant.ExceptionConstant.COMMENT_NOT_FOUND;
 
 @Repository
 public class CommentRepositoryImpl implements CommentRepository {
@@ -25,7 +26,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public Comment getById(long id) {
         return commentJpaRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."));
+                .orElseThrow(()-> new CustomNotFoundException(COMMENT_NOT_FOUND));
     }
 
     @Override

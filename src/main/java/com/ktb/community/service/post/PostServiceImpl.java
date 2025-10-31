@@ -7,6 +7,7 @@ import com.ktb.community.domain.post_stats.PostStats;
 import com.ktb.community.dto.Response;
 import com.ktb.community.dto.post.request.PostRequest;
 import com.ktb.community.dto.post.response.*;
+import com.ktb.community.global.exception.CustomConflictException;
 import com.ktb.community.repository.member.MemberRepository;
 import com.ktb.community.repository.post.PostRepository;
 import com.ktb.community.repository.post_like.PostLikeRepository;
@@ -16,10 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.ktb.community.global.constant.ExceptionConstant.POST_LIKE_CONFLICT;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -124,7 +126,7 @@ public class PostServiceImpl implements PostService {
         Optional<PostLike> postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId);
 
         if (postLike.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 좋아요한 게시물입니다.");
+            throw new CustomConflictException(POST_LIKE_CONFLICT);
         }
 
         postLikeRepository.save(new PostLike(postId, memberId));

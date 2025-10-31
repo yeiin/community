@@ -1,12 +1,13 @@
 package com.ktb.community.repository.post;
 
 import com.ktb.community.domain.post.Post;
+import com.ktb.community.global.exception.CustomNotFoundException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+
+import static com.ktb.community.global.constant.ExceptionConstant.POST_NOT_FOUND;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
@@ -24,7 +25,7 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Post getById(final long postId) {
         return postJpaRepository.findById(postId)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물을 찾을 수 없습니다."));
+                .orElseThrow(()-> new CustomNotFoundException(POST_NOT_FOUND));
     }
 
     @Override
