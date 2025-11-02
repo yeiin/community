@@ -5,7 +5,6 @@ import com.ktb.community.dto.Response;
 import com.ktb.community.dto.member.request.MemberPatchRequest;
 import com.ktb.community.dto.member.request.MemberPostRequest;
 import com.ktb.community.dto.member.request.PasswordRequest;
-import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.dto.member.response.MemberResponse;
 import com.ktb.community.global.encrypt.EncryptEncoder;
 import com.ktb.community.global.exception.CustomConflictException;
@@ -35,7 +34,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public LoginResponse save(final MemberPostRequest memberPostRequest){
+    public MemberResponse save(final MemberPostRequest memberPostRequest){
         nicknameCheck(memberPostRequest.nickname());
         emailCheck(memberPostRequest.email());
 
@@ -48,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
                 .build();
 
         memberRepository.save(member);
-        return authService.createJwts(member.getId());
+        return MemberResponse.from(member);
     }
 
     @Transactional(readOnly = true)
@@ -121,7 +120,7 @@ public class MemberServiceImpl implements MemberService {
     public Response softDeleteMember(final long memberId) {
         Member member = memberRepository.getById(memberId);
         member.updateState(false);
-        authService.deleteAuthByMemberId(memberId);
+//        authService.deleteAuthByMemberId(memberId);
         return Response.of(HttpStatus.OK, "회원 탈퇴에 성공했습니다.");
     }
 

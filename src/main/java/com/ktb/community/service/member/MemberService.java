@@ -4,11 +4,10 @@ import com.ktb.community.dto.Response;
 import com.ktb.community.dto.member.request.MemberPatchRequest;
 import com.ktb.community.dto.member.request.MemberPostRequest;
 import com.ktb.community.dto.member.request.PasswordRequest;
-import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.dto.member.response.MemberResponse;
 
 public interface MemberService {
-    LoginResponse save(final MemberPostRequest memberPostRequest);
+    MemberResponse save(final MemberPostRequest memberPostRequest);
     Response nicknameValidate(final String nickname);
     Response emailValidate(final String email);
     MemberResponse getMemberProfile(final long memberId);

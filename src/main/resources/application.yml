@@ -26,6 +26,9 @@ spring:
     access_exp_time: ${ACCESS_EXP}
     refresh_exp_time: ${REFRESH_EXP}
 
+  session:
+    session_exp_time: ${SESSION_EXP}
+
   servlet:
     multipart:
       max-file-size: 20MB

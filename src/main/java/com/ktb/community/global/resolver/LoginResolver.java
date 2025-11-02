@@ -1,7 +1,7 @@
 package com.ktb.community.global.resolver;
 
 import com.ktb.community.global.annotation.Login;
-import jakarta.servlet.http.HttpServletRequest;
+import com.ktb.community.global.provider.SessionProvider;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -12,6 +12,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginResolver implements HandlerMethodArgumentResolver {
 
+    private final SessionProvider sessionProvider;
+
+    public LoginResolver(final SessionProvider sessionProvider) {
+        this.sessionProvider = sessionProvider;
+    }
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(Login.class);
@@ -21,9 +27,7 @@ public class LoginResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-
-        return Long.parseLong(request.getAttribute("memberId").toString());
+        return sessionProvider.getLoginSession();
     }
 }
 

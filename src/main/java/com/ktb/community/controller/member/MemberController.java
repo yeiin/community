@@ -4,13 +4,11 @@ import com.ktb.community.dto.Response;
 import com.ktb.community.dto.member.request.MemberPatchRequest;
 import com.ktb.community.dto.member.request.MemberPostRequest;
 import com.ktb.community.dto.member.request.PasswordRequest;
-import com.ktb.community.dto.auth.response.LoginResponse;
 import com.ktb.community.dto.member.response.MemberResponse;
 import com.ktb.community.global.annotation.AccountOwner;
 import com.ktb.community.global.annotation.Nickname;
-import com.ktb.community.global.provider.CookieProvider;
+import com.ktb.community.global.provider.SessionProvider;
 import com.ktb.community.service.member.MemberService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import org.springframework.web.bind.annotation.*;
@@ -20,19 +18,18 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final CookieProvider cookieProvider;
+    private final SessionProvider sessionProvider;
 
-    public MemberController(final MemberService memberService, final CookieProvider cookieProvider) {
+    public MemberController(final MemberService memberService, final SessionProvider sessionProvider) {
         this.memberService = memberService;
-        this.cookieProvider = cookieProvider;
+        this.sessionProvider = sessionProvider;
     }
 
     @PostMapping("")
-    public LoginResponse signUp(final @RequestBody @Valid MemberPostRequest memberPostRequest,
-                                HttpServletResponse response) {
-        LoginResponse loginResponse =  memberService.save(memberPostRequest);
-        cookieProvider.setRefreshTokenCookie(response,loginResponse.refreshToken());
-        return loginResponse;
+    public MemberResponse signUp(final @RequestBody @Valid MemberPostRequest memberPostRequest) {
+        MemberResponse memberResponse = memberService.save(memberPostRequest);
+        sessionProvider.setLoginSession(memberResponse.id());
+        return memberResponse;
     }
 
     @GetMapping("/nickname-validation")
